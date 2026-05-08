@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}BiblioBot IA — BiblioTech{% endblock %}
+{% block content %}
+
+<div class="chatbot-page">
+    <div class="chatbot-header">
+        <div class="chatbot-avatar">🤖</div>
+        <div>
+            <h1 class="page-title">BiblioBot <span class="gradient-text">IA</span></h1>
+            <p class="page-subtitle">Posez vos questions sur les livres en langage naturel — propulsé par Google Gemini</p>
+        </div>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="suggestions">
+        <p class="suggestions-label">💡 Essayez :</p>
+        <div class="suggestions-list">
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Est-ce que le livre avec l'ID 1 existe ?</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Les Misérables est-il disponible ?</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Je veux un roman romantique facile à lire</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Je cherche un livre de Victor Hugo</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Quels livres de science-fiction avez-vous ?</button>
+            <button class="suggestion-chip" onclick="sendSuggestion(this)">Combien de livres sont disponibles ?</button>
+        </div>
+    </div>
+
+    <!-- Chat window -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Welcome message -->
+            <div class="message message-bot">
+                <div class="message-avatar">🤖</div>
+                <div class="message-bubble">
+                    <p>Bonjour ! Je suis <strong>BiblioBot</strong>, votre assistant de bibliothèque propulsé par Google Gemini AI. 📚</p>
+                    <p>Je peux vous aider à :</p>
+                    <ul>
+                        <li>🔍 Vérifier la disponibilité d'un livre</li>
+                        <li>📖 Trouver des livres par auteur ou catégorie</li>
+                        <li>⭐ Obtenir des recommandations personnalisées</li>
+                        <li>❓ Répondre à toutes vos questions sur notre catalogue</li>
+                    </ul>
+                    <p>Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input area -->
+    <div class="chat-input-area">
+        <div class="chat-input-box">
+            <textarea id="user-input" class="chat-input" rows="1"
+                placeholder="Posez votre question sur les livres..."
+                onkeydown="handleKeydown(event)"></textarea>
+            <button id="send-btn" class="send-btn" onclick="sendMessage()">
+                <span id="send-icon">➤</span>
+            </button>
+        </div>
+        <p class="input-hint">Appuyez sur <kbd>Entrée</kbd> pour envoyer · <kbd>Shift+Entrée</kbd> pour une nouvelle ligne</p>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}

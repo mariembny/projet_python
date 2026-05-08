@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Accueil — BiblioTech{% endblock %}
+{% block content %}
+
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge">🚀 Propulsé par Google Gemini AI</div>
+        <h1 class="hero-title">Bienvenue sur <span class="gradient-text">BiblioTech</span></h1>
+        <p class="hero-subtitle">Gérez votre bibliothèque intelligemment. Trouvez, ajoutez et explorez des livres avec
+            l'aide de notre assistant IA.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('books.list_books') }}" class="btn btn-primary btn-lg">📖 Explorer le catalogue</a>
+            <a href="{{ url_for('chatbot.chatbot_page') }}" class="btn btn-ghost btn-lg">🤖 Parler à BiblioBot</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="floating-card card-1">📚</div>
+        <div class="floating-card card-2">🤖</div>
+        <div class="floating-card card-3">⭐</div>
+        <div class="book-stack">
+            <div class="book-spine" style="--c:#6366f1">Python</div>
+            <div class="book-spine" style="--c:#8b5cf6">Hugo</div>
+            <div class="book-spine" style="--c:#ec4899">Austen</div>
+            <div class="book-spine" style="--c:#06b6d4">Verne</div>
+            <div class="book-spine" style="--c:#10b981">Camus</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total des livres</div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-number">{{ stats.disponible }}</div>
+        <div class="stat-label">Disponibles</div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">📤</div>
+        <div class="stat-number">{{ stats.emprunte }}</div>
+        <div class="stat-label">Empruntés</div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="stat-icon">🔖</div>
+        <div class="stat-number">{{ stats.reserve }}</div>
+        <div class="stat-label">Réservés</div>
+    </div>
+</div>
+
+<!-- Recent Books -->
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">📖 Derniers ajouts</h2>
+        <a href="{{ url_for('books.list_books') }}" class="btn btn-outline btn-sm">Voir tout →</a>
+    </div>
+    <div class="books-grid">
+        {% for book in books|reverse %}
+        {% if loop.index <= 6 %}
+        <a href="{{ url_for('books.view_book', book_id=book.id_livre) }}" class="book-card"
+            style="text-decoration: none; color: inherit; display: block;">
+            <div class="book-card-cover"
+                style="background: {{ loop.cycle('var(--gradient-1)','var(--gradient-2)','var(--gradient-3)','var(--gradient-4)','var(--gradient-5)') }}">
+                <span class="book-card-icon">📖</span>
+                <div class="book-card-id">#{{ book.id_livre }}</div>
+            </div>
+            <div class="book-card-body">
+                <h3 class="book-card-title">{{ book.titre }}</h3>
+                <p class="book-card-author">{{ book.auteur }}</p>
+                <div class="book-card-meta">
+                    <span class="badge badge-cat">{{ book.categorie }}</span>
+                    <span class="badge badge-{{ book.statut|replace('é','e')|replace('è','e') }}">{{ book.statut
+                        }}</span>
+                </div>
+            </div>
+        </a>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features-section">
+    <h2 class="section-title center">✨ Fonctionnalités</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🗄️</div>
+            <h3>CRUD Complet</h3>
+            <p>Ajoutez, modifiez, supprimez et recherchez des livres facilement.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>Chatbot IA</h3>
+            <p>Posez vos questions en langage naturel à notre assistant Gemini AI.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Recherche Avancée</h3>
+            <p>Trouvez n'importe quel livre par titre, auteur ou identifiant.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Statistiques</h3>
+            <p>Suivez l'état de votre catalogue en temps réel.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

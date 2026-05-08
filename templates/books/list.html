@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Catalogue des livres — BiblioTech{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📖 Catalogue des Livres</h1>
+        <p class="page-subtitle">{{ books|length }} livre(s) trouvé(s)</p>
+    </div>
+    <a href="{{ url_for('books.add_book_route') }}" class="btn btn-primary">➕ Ajouter un livre</a>
+</div>
+
+<!-- Search Bar -->
+<form method="GET" action="{{ url_for('books.list_books') }}" class="search-form">
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par titre, auteur ou ID..." class="search-input" id="search-input">
+        <button type="submit" class="btn btn-primary">Chercher</button>
+        {% if query %}
+        <a href="{{ url_for('books.list_books') }}" class="btn btn-ghost">✕ Effacer</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if query and books|length == 0 %}
+<div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>Aucun résultat pour "{{ query }}"</h3>
+    <p>Essayez avec un autre terme de recherche.</p>
+    <a href="{{ url_for('books.list_books') }}" class="btn btn-primary">Voir tous les livres</a>
+</div>
+{% elif books|length == 0 %}
+<div class="empty-state">
+    <div class="empty-icon">📚</div>
+    <h3>La bibliothèque est vide</h3>
+    <p>Commencez par ajouter votre premier livre.</p>
+    <a href="{{ url_for('books.add_book_route') }}" class="btn btn-primary">➕ Ajouter un livre</a>
+</div>
+{% else %}
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Catégorie</th>
+                <th>Année</th>
+                <th>Qté</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr class="table-row">
+                <td><span class="id-badge">#{{ book.id_livre }}</span></td>
+                <td>
+                    <a href="{{ url_for('books.view_book', book_id=book.id_livre) }}" class="book-title-link">
+                        {{ book.titre }}
+                    </a>
+                </td>
+                <td class="text-muted">{{ book.auteur }}</td>
+                <td><span class="badge badge-cat">{{ book.categorie }}</span></td>
+                <td class="text-muted">{{ book.annee_publication or '—' }}</td>
+                <td>
+                    <span class="qty-badge {% if book.quantite_disponible == 0 %}qty-zero{% endif %}">
+                        {{ book.quantite_disponible }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-{{ book.statut.replace('é','e').replace('è','e') }}">
+                        {{ book.statut }}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <a href="{{ url_for('books.view_book', book_id=book.id_livre) }}" class="btn-icon btn-view" title="Voir">👁️</a>
+                        <a href="{{ url_for('books.edit_book', book_id=book.id_livre) }}" class="btn-icon btn-edit" title="Modifier">✏️</a>
+                        <form method="POST" action="{{ url_for('books.delete_book_route', book_id=book.id_livre) }}" 
+                              onsubmit="return confirm('Supprimer « {{ book.titre }} » ?')" style="display:inline">
+                            <button type="submit" class="btn-icon btn-delete" title="Supprimer">🗑️</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

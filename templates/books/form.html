@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Ajouter un livre' if action == 'add' else 'Modifier le livre' }} — BiblioTech{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ '➕ Ajouter un livre' if action == 'add' else '✏️ Modifier le livre' }}</h1>
+        <p class="page-subtitle">{{ 'Remplissez les informations du nouveau livre' if action == 'add' else 'Mettez à jour les informations du livre' }}</p>
+    </div>
+    <a href="{{ url_for('books.list_books') }}" class="btn btn-ghost">← Retour</a>
+</div>
+
+<div class="form-container">
+    <form method="POST" class="book-form">
+        <div class="form-grid">
+            <!-- Titre -->
+            <div class="form-group form-full">
+                <label class="form-label" for="titre">📝 Titre <span class="required">*</span></label>
+                <input type="text" id="titre" name="titre" class="form-input"
+                       value="{{ book.titre if book else '' }}"
+                       placeholder="Ex: Le Petit Prince" required>
+            </div>
+
+            <!-- Auteur -->
+            <div class="form-group">
+                <label class="form-label" for="auteur">✍️ Auteur <span class="required">*</span></label>
+                <input type="text" id="auteur" name="auteur" class="form-input"
+                       value="{{ book.auteur if book else '' }}"
+                       placeholder="Ex: Antoine de Saint-Exupéry" required>
+            </div>
+
+            <!-- Catégorie -->
+            <div class="form-group">
+                <label class="form-label" for="categorie">🏷️ Catégorie <span class="required">*</span></label>
+                <select id="categorie" name="categorie" class="form-input form-select" required>
+                    <option value="">— Choisir une catégorie —</option>
+                    {% set categories = ['Roman', 'Science-Fiction', 'Fantasy', 'Aventure', 'Histoire', 'Science', 'Informatique', 'Poésie', 'Philosophie', 'Biographie', 'Autre'] %}
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {{ 'selected' if book and book.categorie == cat }}>{{ cat }}</option>
+                    {% endfor %}
+                    {% if book and book.categorie not in categories %}
+                    <option value="{{ book.categorie }}" selected>{{ book.categorie }}</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <!-- Année -->
+            <div class="form-group">
+                <label class="form-label" for="annee_publication">📅 Année de publication</label>
+                <input type="number" id="annee_publication" name="annee_publication" class="form-input"
+                       value="{{ book.annee_publication if book else '' }}"
+                       placeholder="Ex: 1943" min="1000" max="2026">
+            </div>
+
+            <!-- Quantité -->
+            <div class="form-group">
+                <label class="form-label" for="quantite_disponible">📦 Quantité disponible</label>
+                <input type="number" id="quantite_disponible" name="quantite_disponible" class="form-input"
+                       value="{{ book.quantite_disponible if book else 1 }}"
+                       min="0" max="999">
+            </div>
+
+            <!-- Statut -->
+            <div class="form-group">
+                <label class="form-label" for="statut">🔖 Statut</label>
+                <select id="statut" name="statut" class="form-input form-select" onchange="toggleDateRetour(this)">
+                    <option value="disponible" {{ 'selected' if not book or book.statut == 'disponible' }}>✅ Disponible</option>
+                    <option value="emprunté" {{ 'selected' if book and book.statut == 'emprunté' }}>📤 Emprunté</option>
+                    <option value="réservé" {{ 'selected' if book and book.statut == 'réservé' }}>🔖 Réservé</option>
+                </select>
+            </div>
+
+            <!-- Date de retour -->
+            <div class="form-group" id="date-retour-group" style="{{ 'display:none' if not book or book.statut == 'disponible' else '' }}">
+                <label class="form-label" for="date_retour">📆 Date de retour prévue</label>
+                <input type="text" id="date_retour" name="date_retour" class="form-input"
+                       value="{{ book.date_retour if book else '' }}"
+                       placeholder="Ex: 15/03/2026">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('books.list_books') }}" class="btn btn-ghost">Annuler</a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                {{ '➕ Ajouter le livre' if action == 'add' else '💾 Sauvegarder les modifications' }}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function toggleDateRetour(select) {
+    const group = document.getElementById('date-retour-group');
+    group.style.display = (select.value === 'emprunté' || select.value === 'réservé') ? '' : 'none';
+}
+</script>
+{% endblock %}
